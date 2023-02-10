@@ -2,7 +2,7 @@
  * @Author: chenzl
  * @Date: 2022-12-15 13:42:52
  * @LastEditors: chenzl
- * @LastEditTime: 2023-02-10 13:59:58
+ * @LastEditTime: 2023-02-10 16:36:02
  * @Description: vite 配置
  */
 import path from 'path';
@@ -13,6 +13,7 @@ import { createSvgIconsPlugin } from 'vite-plugin-svg-icons';
 import { viteMockServe } from 'vite-plugin-mock';
 import dayjs from 'dayjs';
 import WindiCSS from 'vite-plugin-windicss';
+import { visualizer } from 'rollup-plugin-visualizer';
 import pkg from './package.json';
 
 const { dependencies, devDependencies, name, version } = pkg;
@@ -37,13 +38,45 @@ export default ({ command, mode }) => {
       assetsDir: VITE_ASSETS_DIR,
 
       // 规定触发警告的 chunk 大小（以 kbs 为单位）
-      chunkSizeWarningLimit: 2000,
+      chunkSizeWarningLimit: 1024,
 
       // 指定输出路径（相对于 项目根目录)
       outDir: VITE_OUT_DIR,
 
-      // 禁用 gzip 压缩大小报
+      // 禁用 gzip 压缩大小
       reportCompressedSize: false,
+
+      // chunk 分块策略
+      rollupOptions: {
+        output: {
+          // chunk 文件名
+          chunkFileNames: 'static/js/[name]-[hash].js',
+
+          // 入口文件名
+          entryFileNames: 'static/js/[name]-[hash].js',
+
+          // 静态资源文件名
+          assetFileNames: 'static/[ext]/[name]-[hash].[ext]',
+
+          // 手动分割 chunk
+          manualChunks: {
+            'vue-vendor': ['vue', 'vue-router', 'vue-i18n', 'vuex'],
+            'echart-vendor': ['echarts'],
+            'ui-vendor': ['element-ui'],
+            'utils-vendor': [
+              'axios',
+              'clipboard',
+              'dayjs',
+              'file-saver',
+              'js-cookie',
+              'lodash-es',
+              'nprogress',
+              'path-browserify',
+              'path-to-regexp',
+            ],
+          },
+        },
+      },
 
       // 设置最终构建的浏览器兼容目
       target: 'es2015',
@@ -90,6 +123,7 @@ export default ({ command, mode }) => {
         `,
       }),
       WindiCSS(),
+      visualizer(),
     ],
 
     // 静态资源服务的文件夹
