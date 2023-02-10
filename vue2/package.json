@@ -1,7 +1,7 @@
 {
   "name": "vue2-vite3-admin",
   "private": true,
-  "version": "1.0.1",
+  "version": "1.0.5",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -68,5 +68,9 @@
   "browserslist": [
     "> 1%",
     "last 2 versions"
-  ]
+  ],
+  "engines": {
+    "node": ">= 14.18.0",
+    "npm": ">= 6.14.15"
+  }
 }
