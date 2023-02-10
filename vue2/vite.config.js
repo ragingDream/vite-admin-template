@@ -2,7 +2,7 @@
  * @Author: chenzl
  * @Date: 2022-12-15 13:42:52
  * @LastEditors: chenzl
- * @LastEditTime: 2023-02-07 14:48:25
+ * @LastEditTime: 2023-02-10 13:59:58
  * @Description: vite 配置
  */
 import path from 'path';
@@ -24,6 +24,7 @@ const __APP_INFO__ = {
 export default ({ command, mode }) => {
   const { VITE_PORT, VITE_BASE_URL, VITE_MOCK, VITE_PUBLIC_DIR, VITE_ASSETS_DIR, VITE_OUT_DIR } =
     loadEnv(mode, process.cwd());
+  const noDev = command !== 'serve';
   const isBuild = command === 'build';
 
   return defineConfig({
@@ -80,7 +81,13 @@ export default ({ command, mode }) => {
       }),
       viteMockServe({
         mockPath: 'mock',
-        localEnabled: !isBuild && VITE_MOCK,
+        localEnabled: VITE_MOCK,
+        prodEnabled: noDev && VITE_MOCK,
+        //  这样可以控制关闭mock的时候不让mock打包到最终代码内
+        injectCode: `
+          import { setupProdMockServer } from '../mock/createMockServer';
+          setupProdMockServer();
+        `,
       }),
       WindiCSS(),
     ],
