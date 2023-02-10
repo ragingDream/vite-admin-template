@@ -3,7 +3,11 @@
     <div class="page-header">
       <div class="title">关于</div>
       <div class="content">
-        <el-link type="primary" href="https://github.com/jekip/naive-ui-admin" target="_blank">
+        <el-link
+          type="primary"
+          href="https://github.com/ragingDream/vite-admin-template/tree/main/vue2"
+          target="_blank"
+        >
           {{ name }}
         </el-link>
         基于
@@ -28,7 +32,11 @@
           <el-tag>{{ lastBuildTime }}</el-tag>
         </el-descriptions-item>
         <el-descriptions-item label="Github">
-          <el-link type="primary" href="https://github.com/jekip/naive-ui-admin" target="_blank">
+          <el-link
+            type="primary"
+            href="https://github.com/ragingDream/vite-admin-template/tree/main/vue2"
+            target="_blank"
+          >
             Github
           </el-link>
         </el-descriptions-item>

@@ -29,6 +29,7 @@ vue2-vite3-admin 基于 [vue-element-admin](https://github.com/PanJiaChen/vue-el
   - 多种动态换肤
   - 动态侧边栏（支持多级路由嵌套）
   - 动态面包屑
+  - 第三方站点内嵌与外链跳转
   - Svg Sprite 图标
   - 本地/后端 mock 数据
   - WindiCSS
