@@ -5,7 +5,7 @@
       <div class="content">
         <el-link
           type="primary"
-          href="https://github.com/ragingDream/vite-admin-template/tree/main/vue2"
+          href="https://github.com/ragingDream/vite-admin-template/tree/vue2.x"
           target="_blank"
         >
           {{ name }}
@@ -34,7 +34,7 @@
         <el-descriptions-item label="Github">
           <el-link
             type="primary"
-            href="https://github.com/ragingDream/vite-admin-template/tree/main/vue2"
+            href="https://github.com/ragingDream/vite-admin-template/tree/vue2.x"
             target="_blank"
           >
             Github
