@@ -21,3 +21,6 @@ dist-ssr
 *.sln
 *.sw?
 *.zip
+
+# name files
+report.html

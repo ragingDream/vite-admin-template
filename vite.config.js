@@ -2,7 +2,7 @@
  * @Author: chenzl
  * @Date: 2022-12-15 13:42:52
  * @LastEditors: chenzl
- * @LastEditTime: 2023-02-10 16:36:02
+ * @LastEditTime: 2023-02-20 16:04:32
  * @Description: vite 配置
  */
 import path from 'path';
@@ -12,6 +12,8 @@ import vueJsx from '@vitejs/plugin-vue2-jsx';
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons';
 import { viteMockServe } from 'vite-plugin-mock';
 import dayjs from 'dayjs';
+import { createHtmlPlugin } from 'vite-plugin-html';
+import viteCompression from 'vite-plugin-compression';
 import WindiCSS from 'vite-plugin-windicss';
 import { visualizer } from 'rollup-plugin-visualizer';
 import pkg from './package.json';
@@ -23,10 +25,79 @@ const __APP_INFO__ = {
 };
 
 export default ({ command, mode }) => {
-  const { VITE_PORT, VITE_BASE_URL, VITE_MOCK, VITE_PUBLIC_DIR, VITE_ASSETS_DIR, VITE_OUT_DIR } =
-    loadEnv(mode, process.cwd());
+  // 项目配置
+  const {
+    VITE_APP_TITLE,
+    VITE_PORT,
+    VITE_BASE_URL,
+    VITE_MOCK,
+    VITE_ASSETS_DIR,
+    VITE_OUT_DIR,
+    VITE_GZIP_COMPRESSION,
+  } = loadEnv(mode, process.cwd());
+
+  // 不是 development 命令
   const noDev = command !== 'serve';
+
+  // 是 build 命令
   const isBuild = command === 'build';
+
+  console.log();
+
+  // vite 插件
+  const vitePlugins = [
+    vue(),
+    vueJsx(),
+    createHtmlPlugin({
+      inject: {
+        data: {
+          title: VITE_APP_TITLE,
+        },
+      },
+    }),
+    createSvgIconsPlugin({
+      iconDirs: [path.resolve(process.cwd(), 'src/assets/icons')],
+      symbolId: 'icon-[name]',
+    }),
+    viteMockServe({
+      // mock 文件的存储文件夹
+      mockPath: 'mock',
+
+      // 本地环境是否开启 mock
+      localEnabled: VITE_MOCK,
+
+      // 生产环境是否开启
+      prodEnabled: noDev && VITE_MOCK,
+
+      // 注入 mock 服务
+      injectCode: `
+        import { setupProdMockServer } from '../mock/createMockServer';
+        setupProdMockServer();
+      `,
+    }),
+    WindiCSS(),
+    viteCompression({
+      // 是否开启 gzip 压缩
+      disable: !(isBuild && VITE_GZIP_COMPRESSION),
+
+      // 超过 50 kb 才压缩
+      threshold: 50 * 1024,
+    }),
+  ];
+
+  // 是否启用 rollup-plugin-visualizer 依赖分析插件
+  // ! 需放在插件的最后一位
+  if (isBuild && mode === 'report') {
+    vitePlugins.push(
+      visualizer({
+        // 生成的图表文件名称
+        filename: 'report.html',
+
+        // 是否在默认用户代理中打开生成的文件
+        open: true,
+      })
+    );
+  }
 
   return defineConfig({
     // 公共基础路径
@@ -49,14 +120,14 @@ export default ({ command, mode }) => {
       // chunk 分块策略
       rollupOptions: {
         output: {
+          // 静态资源文件名
+          assetFileNames: 'static/[ext]/[name]-[hash].[ext]',
+
           // chunk 文件名
           chunkFileNames: 'static/js/[name]-[hash].js',
 
           // 入口文件名
-          entryFileNames: 'static/js/[name]-[hash].js',
-
-          // 静态资源文件名
-          assetFileNames: 'static/[ext]/[name]-[hash].[ext]',
+          entryFileNames: 'static/js/[name].js',
 
           // 手动分割 chunk
           manualChunks: {
@@ -105,29 +176,7 @@ export default ({ command, mode }) => {
     },
 
     // vite 插件
-    plugins: [
-      vue(),
-      vueJsx(),
-      createSvgIconsPlugin({
-        iconDirs: [path.resolve(process.cwd(), 'src/assets/icons')],
-        symbolId: 'icon-[name]',
-      }),
-      viteMockServe({
-        mockPath: 'mock',
-        localEnabled: VITE_MOCK,
-        prodEnabled: noDev && VITE_MOCK,
-        //  这样可以控制关闭mock的时候不让mock打包到最终代码内
-        injectCode: `
-          import { setupProdMockServer } from '../mock/createMockServer';
-          setupProdMockServer();
-        `,
-      }),
-      WindiCSS(),
-      visualizer(),
-    ],
-
-    // 静态资源服务的文件夹
-    publicDir: VITE_PUBLIC_DIR,
+    plugins: vitePlugins,
 
     // 解构配置
     resolve: {
