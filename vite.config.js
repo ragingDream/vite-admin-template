@@ -2,7 +2,7 @@
  * @Author: chenzl
  * @Date: 2022-12-15 13:42:52
  * @LastEditors: chenzl
- * @LastEditTime: 2023-02-20 16:04:32
+ * @LastEditTime: 2023-02-23 14:18:27
  * @Description: vite 配置
  */
 import path from 'path';
@@ -36,7 +36,7 @@ export default ({ command, mode }) => {
     VITE_GZIP_COMPRESSION,
   } = loadEnv(mode, process.cwd());
 
-  // 不是 development 命令
+  // 不是 serve 命令
   const noDev = command !== 'serve';
 
   // 是 build 命令
