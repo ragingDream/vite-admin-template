@@ -10,7 +10,7 @@
         >
           {{ name }}
         </el-link>
-        基于
+        是基于
         <el-link
           type="primary"
           href="https://github.com/PanJiaChen/vue-element-admin"
@@ -18,7 +18,7 @@
         >
           vue-element-admin
         </el-link>
-        改造的一个后台前端解决方案。它基于 vue2.7、vite3 和 element-ui 实现，内置了 i18n
+        改造的一个后台前端解决方案。它使用 vue2.7、vite3 和 element-ui 实现，内置了 i18n
         国际化解决方案，动态路由，权限验证，提炼了典型的业务模型，提供了丰富的功能组件，它可以帮助你快速搭建企业级中后台产品原型。
       </div>
     </div>
